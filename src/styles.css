@@ -16,8 +16,7 @@
   --color-gradient-darkblue: #124685;
   --color-green: #05BC20;
   --color-light-green: #DFFFE3; /* caixa de envio da imagem status 'Arquivo enviado' */
-  --breakpoint-xl: 1200px;
-  --breakpoint-2xl: 1700px;
+  --breakpoint-2xl: 100rem;
 }
 
 body {
