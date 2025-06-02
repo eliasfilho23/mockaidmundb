@@ -62,6 +62,7 @@ export const DiagnosticoStep1: FC<PropsWithChildren<{req: any, setReq: (arg: any
         toast.error(`${statusCode? statusCode: ''} : ${statusText? statusText.toString() : ''}`)
         setReqLimiter(false)
       }
+      throw error
     }
   }
 
