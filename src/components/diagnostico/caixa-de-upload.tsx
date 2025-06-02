@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import ReactImageUploading from "react-images-uploading";
 import uploadIcon from "../../assets/imgs/icon_upload.png";
 import confirmedIcon from "../../assets/imgs/icon_confirm.png";
@@ -14,20 +14,58 @@ interface CaixaDeUploadProps {
 export const CaixaDeUpload: FC<CaixaDeUploadProps> = (props) => {
   const { imagem, setImagem, serverResponseStatus } = props;
   const {toast} = useToast()
-  const onChange = (imageList: any, addUpdateIndex: any) => {
+
+  const handleUploadedImgSize = (imageList: any) => {
     if(imageList[0].file.size > 4194304) {
       toast.error('O tamanho máximo da imagem deve ser 4MB.')
-      return
+      return false
     }
     setImagem(imageList);
+    return true
   };
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      if (serverResponseStatus !== "unrequested" || !event.clipboardData) {
+        return;
+      }
+
+      const items = event.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.kind === "file" && item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (file) {
+            event.preventDefault();
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const newImageArr = [{
+                file: file,
+                data_url: reader.result as string,
+              }];
+              if(!handleUploadedImgSize(newImageArr)) return
+              setImagem([newImageArr[0]]);
+            };
+            reader.readAsDataURL(file);
+            break;
+          }
+        }
+      }
+    };
+    document.addEventListener("paste", handlePaste);
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, [setImagem, serverResponseStatus]);
+
 
   return (
     <div className="z-50 2xl:w-[650px] 2xl:h-[475px] 2xl:min-h-[475px] xl:h-full xl:min-h-[200px] xl:w-[400px] w-[300px] h-fit rounded-md">
       {serverResponseStatus === "unrequested" ? (
         <ReactImageUploading
           value={imagem}
-          onChange={onChange}
+          onChange={handleUploadedImgSize}
           dataURLKey="data_url"
         >
           {({
