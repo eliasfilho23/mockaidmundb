@@ -43,7 +43,7 @@ export const DiagnosticoStep1: FC<PropsWithChildren<{req: any, setReq: (arg: any
           exam_type: examType,
           patient_sex: sexo?.value,
           // MUDAR EMBAIXO MANUALMENTE OS VALORES DA DOENÇA
-          selected_diseases_json: ['pneumonia', 'derrame pleural', 'a', 'b', 'c', 'dwadw']
+          selected_diseases_json: ['derramePleural', 'derramePericardico']
         }
         const requisitionToast = toast.loading('Analisando exame')
         await client.sendImage('/diagnose', reqBody).then((resBody) => {
